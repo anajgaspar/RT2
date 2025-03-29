@@ -6,63 +6,68 @@ import Multiplicacao from './multiplicacao';
 import Divisao from './divisao';
 import Potenciacao from './potenciacao';
 import Radiciacao from './radiciacao';
+import Bhaskara from './bhaskara';
 
 let mensagens = new Mensagens()
 
-let iniciar = () => {
-    let leitor = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout
-    })
+let leitor = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+})
 
-    leitor.question(`Digite os números e a operação que deseja:`, (valor) => {
-        let instrucoes = valor.split(' ')
-        let numero1 = Number(instrucoes[0])
-        let numero2 = Number(instrucoes[1])
-        let operacao = instrucoes[2]
-        console.log(`Estas foram suas instruções: ${instrucoes}\n`)
-
-        if (valor.trim() === 'sair') {
+function iniciar() {
+    leitor.question(`Digite a operação que deseja:`, (operacao) => {
+        if (operacao === "bhaskara") {
+            leitor.question(`Informe os coeficientes a, b e c separados por espaço: `, (input) => {
+                let [numero1, numero2, numero3] = input.split(' ').map(Number)
+                let [x1, x2] = Bhaskara.calcularRaiz(numero1, numero2, numero3)
+                console.log(`Raízes da equação: x1 = ${x1}, x2 = ${x2}`)
+                iniciar()
+            })
+        } else if (operacao === 'sair') {
             console.log(`Até mais! Volte sempre :)`)
             leitor.close()
-            return
-        }
+        } else {
+            leitor.question(`Informe dois números separados por espaço: `, (input) => {
+                let [numero1, numero2] = input.split(' ').map(Number)
+                let calculo
 
-        switch (operacao) {
-            case 'somar':
-                let calculo = new Soma()
-                console.log(`O resultado da operação é: ${calculo.calcular(numero1, numero2)}\n`)
-                break
-            case 'subtrair':
-                calculo = new Subtracao()
-                console.log(`O resultado da operação é: ${calculo.calcular(numero1, numero2)}\n`)
-                break
-            case 'multiplicar':
-                calculo = new Multiplicacao()
-                console.log(`O resultado da operação é: ${calculo.calcular(numero1, numero2)}\n`)
-                break
-            case 'dividir':
-                calculo = new Divisao()
-                console.log(`O resultado da operação é: ${calculo.calcular(numero1, numero2)}\n`)
-                break
-            case 'potenciar':
-                calculo = new Potenciacao()
-                console.log(`O resultado da operação é: ${calculo.calcular(numero1, numero2)}\n`)
-                break
-            case 'radiciar':
-                calculo = new Radiciacao()
-                console.log(`O resultado da operação é: ${calculo.calcular(numero1, numero2)}\n`)
-                break
-            default:
-                console.log(`Operação não entendida :(`)
+                switch (operacao) {
+                    case 'somar':
+                        calculo = new Soma()
+                        break
+                    case 'subtrair':
+                        calculo = new Subtracao()
+                        break
+                    case 'multiplicar':
+                        calculo = new Multiplicacao()
+                        break
+                    case 'dividir':
+                        calculo = new Divisao()
+                        break
+                    case 'potenciar':
+                        calculo = new Potenciacao()
+                        break
+                    case 'radiciar':
+                        calculo = new Radiciacao()
+                        break
+                    default:
+                        console.log(`Operação não entendida :(`)
+                        leitor.close()
+                        return
+                }
+
+                if (input === 'sair') {
+                    console.log(`Até mais! Volte sempre :)`)
+                    leitor.close()
+                } else {
+                    console.log(`O resultado da operação é: ${calculo.calcular(numero1, numero2)}\n`)
+                    iniciar()
+                }
+            })
         }
-        leitor.close()
-        mensagens.comoUsar()
-        iniciar()
     })
 }
-
 mensagens.boasVindas()
 mensagens.listarOpcoes()
-mensagens.comoUsar()
 iniciar()
